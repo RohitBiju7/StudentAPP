@@ -1,0 +1,21 @@
+{
+  "name": "studentapi",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Rohit Biju",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.9.1",
+    "node": "^26.5.0",
+    "nodemon": "^3.1.14"
+  }
+}
