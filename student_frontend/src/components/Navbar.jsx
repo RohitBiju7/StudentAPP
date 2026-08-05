@@ -15,6 +15,7 @@ const Navbar = () => {
       justify="space-between"
       borderBottom="1px solid"
       borderColor="gray.800"
+      borderRadius="2xl"
     >
       {/* Clickable Brand / Logo Icon */}
       <ChakraLink 
@@ -24,21 +25,21 @@ const Navbar = () => {
         alignItems="center" 
         _hover={{ textDecoration: "none", opacity: 0.8 }}
       >
-        <Icon as={GraduationCap} boxSize={7} color="ghost.400" />
+        <Icon as={GraduationCap} boxSize={7} color="teal.400" />
       </ChakraLink>
 
       <HStack gap={3}>
         
-        <Button asChild colorPalette="ghost" size="sm" bg="gray.800" color="white" _hover={{ bg: "gray.700" }}>
-          <Link to="/register"><UserPlus />Register</Link>
+        <Button asChild colorPalette="ghost" size="sm" bg="gray.800" color="white" _hover={{ bg: "gray.700" }} >
+          <Link to="/register"><Icon as={UserPlus} color="teal.400" mr={1} />Register</Link>
         </Button>
         
         <Button asChild colorPalette="ghost" size="sm" bg="gray.800" color="white" _hover={{ bg: "gray.700" }}>
-          <Link to="/students"><NotebookTabs />Directory</Link>
+          <Link to="/students"><Icon as={NotebookTabs} color="teal.400" mr={1} />Directory</Link>
         </Button>
 
         <Button asChild colorPalette="ghost" size="sm" bg="gray.800" color="white" _hover={{ bg: "gray.700" }}>
-          <Link to="/feedback"><MessageSquareText />Feedback</Link>
+          <Link to="/feedback"><Icon as={MessageSquareText} color="teal.400" mr={1} />Feedback</Link>
         </Button>
       </HStack>
     </Flex>

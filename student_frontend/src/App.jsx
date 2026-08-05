@@ -1,6 +1,6 @@
 // src/App.jsx
 import { Routes, Route, Link as RouterLink } from 'react-router-dom'
-import { Container, Heading, Text, VStack, Button, HStack } from '@chakra-ui/react'
+import { Container, Heading, Text, VStack, Button, HStack, Box } from '@chakra-ui/react'
 import Navbar from './components/Navbar.jsx'
 import Register from './components/Register.jsx'
 import Login from './components/Login.jsx'
@@ -18,15 +18,9 @@ const Home = () => {
           Manage profiles, track records, and streamline administration in one place.
         </Text>
         <HStack gap={4} mt={4}>
-
-          <Button asChild bg="gray.800" color="white" _hover={{ bg: "gray.700" }} size="lg">
-            <RouterLink to="/login">Login</RouterLink>
-          </Button>
-
           <Button asChild variant="ghost" bg="gray.800" color="white" _hover={{ bg: "gray.700" }} size="lg">
             <RouterLink to="/register">Register</RouterLink>
           </Button>
-          
         </HStack>
       </VStack>
     </Container>
@@ -35,7 +29,14 @@ const Home = () => {
 
 const App = () => {
   return (
-    <div style={{ backgroundColor: '#09090b', minHeight: '100vh' }}>
+    <Box
+      className="dark"
+      colorScheme="dark"
+      minH="100vh"
+      bg="#09090b"
+      color="white"
+      bgImage="radial-gradient(circle at 50% 30%, rgba(56, 178, 172, 0.12) 0%, rgba(15, 23, 42, 0) 70%)"
+    >
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -44,7 +45,7 @@ const App = () => {
         <Route path="/students" element={<StudentTable />} />
         <Route path="/feedback" element={<Feedback />} />
       </Routes>
-    </div>
+    </Box>
   )
 }
 

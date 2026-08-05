@@ -242,6 +242,7 @@ const Register = () => {
                   variant="ghost"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
+                  color="teal.400"
                 >
                   {showPassword ? <FiEyeOff /> : <FiEye />}
                 </IconButton>
@@ -263,7 +264,7 @@ const Register = () => {
             </Button>
 
             {/* Login Redirect Link */}
-            <Text fontSize="sm" color="gray.400" mt={2} textAlign="center">
+            {/* <Text fontSize="sm" color="gray.400" mt={2} textAlign="center">
               Already registered?{" "}
               <Link
                 as={RouterLink}
@@ -273,7 +274,7 @@ const Register = () => {
               >
                 Click here to Login
               </Link>
-            </Text>
+            </Text> */}
           </VStack>
         </form>
       </Box>

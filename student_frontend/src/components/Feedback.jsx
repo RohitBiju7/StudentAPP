@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState } from "react";
+import axios from "axios";
 import {
   Box,
   Container,
@@ -9,32 +10,51 @@ import {
   Textarea,
   Button,
   Field,
-} from '@chakra-ui/react'
+  Spinner,
+} from "@chakra-ui/react";
 
 const Feedback = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    course: '',
-    feedback: '',
-  })
-  const [isSubmitted, setIsSubmitted] = useState(false)
+    email: "",
+    course: "",
+    feedback: "",
+  });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // Process feedback submission logic here (e.g., API call)
-    console.log('Feedback submitted:', formData)
-    
-    setIsSubmitted(true)
-    setFormData({ email: '', course: '', feedback: '' })
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMessage("");
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/feedback/submit",
+        formData
+      );
+
+      console.log("Feedback submitted:", response.data);
+      setIsSubmitted(true);
+      setFormData({ email: "", course: "", feedback: "" });
+    } catch (error) {
+      console.error("Submission error:", error);
+      const message =
+        error.response?.data?.message ||
+        "Failed to submit feedback. Please try again.";
+      setErrorMessage(message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Container maxW="lg" py={12}>
@@ -56,6 +76,23 @@ const Feedback = () => {
           </Text>
         </VStack>
 
+        {/* Error Alert Message */}
+        {errorMessage && (
+          <Box
+            mb={5}
+            p={3}
+            borderRadius="md"
+            bg="red.900"
+            borderColor="red.700"
+            borderWidth="1px"
+            color="white"
+            fontSize="sm"
+            textAlign="center"
+          >
+            {errorMessage}
+          </Box>
+        )}
+
         {isSubmitted ? (
           <VStack gap={4} py={6} textAlign="center">
             <Text color="green.400" fontSize="lg" fontWeight="medium">
@@ -65,8 +102,11 @@ const Feedback = () => {
               size="sm"
               variant="ghost"
               color="gray.300"
-              _hover={{ bg: 'gray.800', color: 'white' }}
-              onClick={() => setIsSubmitted(false)}
+              _hover={{ bg: "gray.800", color: "white" }}
+              onClick={() => {
+                setIsSubmitted(false);
+                setErrorMessage("");
+              }}
             >
               Submit another response
             </Button>
@@ -87,7 +127,7 @@ const Feedback = () => {
                   onChange={handleChange}
                   bg="gray.800"
                   borderColor="gray.700"
-                  _focus={{ borderColor: 'blue.500' }}
+                  _focus={{ borderColor: "blue.500" }}
                 />
               </Field.Root>
 
@@ -104,7 +144,7 @@ const Feedback = () => {
                   onChange={handleChange}
                   bg="gray.800"
                   borderColor="gray.700"
-                  _focus={{ borderColor: 'blue.500' }}
+                  _focus={{ borderColor: "blue.500" }}
                 />
               </Field.Root>
 
@@ -121,7 +161,7 @@ const Feedback = () => {
                   onChange={handleChange}
                   bg="gray.800"
                   borderColor="gray.700"
-                  _focus={{ borderColor: 'blue.500' }}
+                  _focus={{ borderColor: "blue.500" }}
                 />
               </Field.Root>
 
@@ -129,20 +169,21 @@ const Feedback = () => {
               <Button
                 type="submit"
                 w="full"
-                bg="gray.700"
+                bg="gray.800"
                 color="white"
-                _hover={{ bg: 'gray.600' }}
+                _hover={{ bg: "gray.700" }}
                 size="lg"
                 mt={2}
+                isDisabled={loading}
               >
-                Submit Feedback
+                {loading ? <Spinner size="sm" /> : "Submit Feedback"}
               </Button>
             </VStack>
           </form>
         )}
       </Box>
     </Container>
-  )
-}
+  );
+};
 
-export default Feedback
+export default Feedback;
