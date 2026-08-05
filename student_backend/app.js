@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const port = 3000;
 
 require('dotenv').config();
@@ -14,7 +15,9 @@ const db = require('./connection');
 db();
 
 // Middleware
+app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Student API routes
 app.use('/students', userRoutes);

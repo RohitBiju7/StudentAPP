@@ -1,5 +1,7 @@
 // src/components/Navbar.jsx
-import { Flex, Heading, HStack, Button } from "@chakra-ui/react"
+import { Flex, HStack, Button, Link as ChakraLink, Icon } from "@chakra-ui/react"
+import { Link } from "react-router-dom"
+import { GraduationCap, NotebookTabs, MessageSquareText } from "lucide-react"
 
 const Navbar = () => {
   return (
@@ -11,17 +13,27 @@ const Navbar = () => {
       color="white"
       align="center"
       justify="space-between"
+      borderBottom="1px solid"
+      borderColor="gray.800"
     >
-      <Heading size="md" color="white">
-        Student Management System
-      </Heading>
+      {/* Clickable Brand / Logo Icon */}
+      <ChakraLink 
+        as={Link} 
+        to="/" 
+        display="flex" 
+        alignItems="center" 
+        _hover={{ textDecoration: "none", opacity: 0.8 }}
+      >
+        <Icon as={GraduationCap} boxSize={7} color="ghost.400" />
+      </ChakraLink>
 
-      <HStack spacing={3}>
-        <Button variant="ghost" colorScheme="whiteAlpha" size="sm">
-          Login
+      <HStack gap={3}>
+        <Button asChild colorPalette="ghost" size="sm" bg="gray.800" color="white" _hover={{ bg: "gray.700" }}>
+          <Link to="/students"><NotebookTabs />Directory</Link>
         </Button>
-        <Button colorScheme="blue" size="sm">
-          Register
+
+        <Button asChild colorPalette="ghost" size="sm" bg="gray.800" color="white" _hover={{ bg: "gray.700" }}>
+          <Link to="/feedback"><MessageSquareText />Feedback</Link>
         </Button>
       </HStack>
     </Flex>

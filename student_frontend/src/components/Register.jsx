@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Link as RouterLink } from "react-router-dom"
 import {
   Box,
   Button,
@@ -7,16 +8,21 @@ import {
   Heading,
   Input,
   VStack,
+  HStack,
   Text,
   IconButton,
+  Link,
 } from "@chakra-ui/react"
 import { FiEye, FiEyeOff } from "react-icons/fi"
 
 const Register = () => {
   // 1. Form state to store inputs
   const [formData, setFormData] = useState({
-    name: "",
+    rollno: "",
+    candidate_name: "",
+    course: "",
     email: "",
+    marks: "",
     password: "",
   })
 
@@ -31,11 +37,10 @@ const Register = () => {
     })
   }
 
-  // 4. Handle form submission (MERN backend integration point)
+  // 4. Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault()
     console.log("Form Submitted:", formData)
-    // Here you will make an axios/fetch post request to your Express server
   }
 
   return (
@@ -57,7 +62,7 @@ const Register = () => {
         </Text>
 
         <form onSubmit={handleSubmit}>
-          <VStack spacing={4}>
+          <VStack gap={4}>
             {/* Full Name */}
             <Box w="full">
               <Text as="label" fontSize="sm" color="gray.300" mb={2} display="block">
@@ -65,16 +70,53 @@ const Register = () => {
               </Text>
               <Input
                 type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
+                name="candidate_name"
                 placeholder="John Doe"
+                value={formData.candidate_name}
+                onChange={handleChange}
                 bg="gray.800"
                 borderColor="gray.700"
                 _hover={{ borderColor: "gray.600" }}
-                _focus={{ borderColor: "blue.400", bg: "gray.800" }}
+                _focus={{ borderColor: "ghost.400", bg: "gray.800" }}
               />
             </Box>
+
+            {/* Roll Number & Course (Placed side by side to save vertical space) */}
+            <HStack w="full" gap={3}>
+              <Box w="half" flex={1}>
+                <Text as="label" fontSize="sm" color="gray.300" mb={2} display="block">
+                  Roll No.
+                </Text>
+                <Input
+                  type="text"
+                  name="rollno"
+                  placeholder="CS101"
+                  value={formData.rollno}
+                  onChange={handleChange}
+                  bg="gray.800"
+                  borderColor="gray.700"
+                  _hover={{ borderColor: "gray.600" }}
+                  _focus={{ borderColor: "ghost.400", bg: "gray.800" }}
+                />
+              </Box>
+
+              <Box w="half" flex={1}>
+                <Text as="label" fontSize="sm" color="gray.300" mb={2} display="block">
+                  Course
+                </Text>
+                <Input
+                  type="text"
+                  name="course"
+                  placeholder="B.Tech CS"
+                  value={formData.course}
+                  onChange={handleChange}
+                  bg="gray.800"
+                  borderColor="gray.700"
+                  _hover={{ borderColor: "gray.600" }}
+                  _focus={{ borderColor: "ghost.400", bg: "gray.800" }}
+                />
+              </Box>
+            </HStack>
 
             {/* Email Address */}
             <Box w="full">
@@ -84,13 +126,31 @@ const Register = () => {
               <Input
                 type="email"
                 name="email"
+                placeholder="student@university.edu"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="student@university.edu"
                 bg="gray.800"
                 borderColor="gray.700"
                 _hover={{ borderColor: "gray.600" }}
-                _focus={{ borderColor: "blue.400", bg: "gray.800" }}
+                _focus={{ borderColor: "ghost.400", bg: "gray.800" }}
+              />
+            </Box>
+
+            {/* Marks */}
+            <Box w="full">
+              <Text as="label" fontSize="sm" color="gray.300" mb={2} display="block">
+                Marks
+              </Text>
+              <Input
+                type="number"
+                name="marks"
+                placeholder="85"
+                value={formData.marks}
+                onChange={handleChange}
+                bg="gray.800"
+                borderColor="gray.700"
+                _hover={{ borderColor: "gray.600" }}
+                _focus={{ borderColor: "ghost.400", bg: "gray.800" }}
               />
             </Box>
 
@@ -103,35 +163,50 @@ const Register = () => {
                 <Input
                   type={showPassword ? "text" : "password"}
                   name="password"
+                  placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="••••••••"
                   bg="gray.800"
                   borderColor="gray.700"
                   _hover={{ borderColor: "gray.600" }}
-                  _focus={{ borderColor: "blue.400", bg: "gray.800" }}
+                  _focus={{ borderColor: "ghost.400", bg: "gray.800" }}
                 />
                 <IconButton
                   size="sm"
                   variant="ghost"
-                  colorScheme="whiteAlpha"
                   onClick={() => setShowPassword(!showPassword)}
-                  icon={showPassword ? <FiEyeOff /> : <FiEye />}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                />
+                >
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                </IconButton>
               </Flex>
             </Box>
 
             {/* Submit Button */}
             <Button
               type="submit"
-              colorScheme="blue"
+              bg="gray.800"
+              color="white"
+              _hover={{ bg: "gray.700" }}
               width="full"
               mt={4}
               size="lg"
             >
               Register
             </Button>
+
+            {/* Login Redirect Link */}
+            <Text fontSize="sm" color="gray.400" mt={2} textAlign="center">
+              Already registered?{" "}
+              <Link
+                as={RouterLink}
+                to="/login"
+                color="ghost.400"
+                _hover={{ textDecoration: "underline", opacity: 0.8 }}
+              >
+                Click here to Login
+              </Link>
+            </Text>
           </VStack>
         </form>
       </Box>
