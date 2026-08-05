@@ -139,17 +139,12 @@ router.get('/:rollno', async (req, res) => {
 });
 
 
-// update student by rollno
-router.put('/:rollno', async (req, res) => {
+// update student by id
+router.put('/:id', async (req, res) => {
     try {
-        const rollno = parseInt(req.params.rollno);
-        if (isNaN(rollno)) {
-            return res.status(400).json({ message: 'Invalid roll number format' });
-        }
-
         const updates = req.body;
         const options = { new: true, runValidators: true };
-        const updated = await Student.findOneAndUpdate({ rollno }, updates, options);
+        const updated = await Student.findByIdAndUpdate(req.params.id, updates, options);
 
         if (!updated) return res.status(404).json({ message: 'Student not found' });
 
@@ -160,11 +155,10 @@ router.put('/:rollno', async (req, res) => {
 });
 
 
-//Delete student
-router.delete('/:rollno', async (req, res) => {
+//Delete student by id
+router.delete('/:id', async (req, res) => {
     try {
-        const rollno = parseInt(req.params.rollno);
-        const deleted = await Student.findOneAndDelete({ rollno });
+        const deleted = await Student.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ message: 'Student not found' });
 
         const totalStudents = await Student.countDocuments();

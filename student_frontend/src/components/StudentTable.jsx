@@ -14,9 +14,9 @@ import { FiEdit2, FiTrash2, FiCheck, FiX } from "react-icons/fi";
 const StudentTable = () => {
   const [students, setStudents] = useState([]);
 
-  // Track active row states using rollno instead of _id
-  const [editingRollNo, setEditingRollNo] = useState(null);
-  const [deletingRollNo, setDeletingRollNo] = useState(null);
+  // Track active row states using MongoDB _id
+  const [editingId, setEditingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const [editFormData, setEditFormData] = useState(null);
 
   // 1. GET Request on component load
@@ -34,8 +34,8 @@ const StudentTable = () => {
 
   // Start Inline Editing
   const handleEditClick = (student) => {
-    setEditingRollNo(student.rollno);
-    setDeletingRollNo(null); // Cancel any active delete prompts
+    setEditingId(student._id);
+    setDeletingId(null); // Cancel any active delete prompts
     setEditFormData({ ...student });
   };
 
@@ -48,20 +48,19 @@ const StudentTable = () => {
     }));
   };
 
-  // 2. PUT Request using rollno
+  // 2. PUT Request using _id
   const handleSaveEdit = () => {
     axios
-      .put(`http://localhost:3000/students/${editingRollNo}`, editFormData)
+      .put(`http://localhost:3000/students/${editingId}`, editFormData)
       .then((response) => {
-        // Express backend returns { message: "...", student: updated }
-        const updatedStudent = response.data.student || response.data;
+        const updatedStudent = response.data.student;
 
         setStudents(
           students.map((student) =>
-            student.rollno === editingRollNo ? updatedStudent : student
+            student._id === editingId ? updatedStudent : student
           )
         );
-        setEditingRollNo(null);
+        setEditingId(null);
         setEditFormData(null);
         console.log("Student updated successfully:", response.data);
       })
@@ -72,23 +71,23 @@ const StudentTable = () => {
 
   // Cancel Inline Edit
   const handleCancelEdit = () => {
-    setEditingRollNo(null);
+    setEditingId(null);
     setEditFormData(null);
   };
 
   // Delete Prompt Triggers
-  const handleDeleteClick = (rollno) => {
-    setDeletingRollNo(rollno);
-    setEditingRollNo(null); // Cancel any active edits
+  const handleDeleteClick = (id) => {
+    setDeletingId(id);
+    setEditingId(null); // Cancel any active edits
   };
 
-  // 3. DELETE Request using rollno
-  const handleConfirmDelete = (rollno) => {
+  // 3. DELETE Request using _id
+  const handleConfirmDelete = (id) => {
     axios
-      .delete(`http://localhost:3000/students/${rollno}`)
+      .delete(`http://localhost:3000/students/${id}`)
       .then((response) => {
-        setStudents(students.filter((student) => student.rollno !== rollno));
-        setDeletingRollNo(null);
+        setStudents(students.filter((student) => student._id !== id));
+        setDeletingId(null);
         console.log("Student deleted successfully:", response.data);
       })
       .catch((error) => {
@@ -98,7 +97,7 @@ const StudentTable = () => {
 
   // Cancel Delete
   const handleCancelDelete = () => {
-    setDeletingRollNo(null);
+    setDeletingId(null);
   };
 
   return (
@@ -142,12 +141,12 @@ const StudentTable = () => {
 
           <Table.Body>
             {students.map((student) => {
-              const isEditing = editingRollNo === student.rollno;
-              const isDeleting = deletingRollNo === student.rollno;
+              const isEditing = editingId === student._id;
+              const isDeleting = deletingId === student._id;
 
               return (
                 <Table.Row
-                  key={student.rollno}
+                  key={student._id}
                   borderColor="gray.800"
                   _hover={{ bg: isEditing ? "gray.900" : "gray.800" }}
                 >
@@ -163,7 +162,6 @@ const StudentTable = () => {
                         bg="gray.800"
                         borderColor="gray.700"
                         _focus={{ borderColor: "ghost.400" }}
-                        isReadOnly
                       />
                     ) : (
                       student.rollno
@@ -277,7 +275,7 @@ const StudentTable = () => {
                             variant="ghost"
                             color="red.400"
                             _hover={{ bg: "red.900", color: "red.200" }}
-                            onClick={() => handleConfirmDelete(student.rollno)}
+                            onClick={() => handleConfirmDelete(student._id)}
                             aria-label="Confirm delete"
                           >
                             <FiCheck />
@@ -314,7 +312,7 @@ const StudentTable = () => {
                             variant="ghost"
                             color="red.400"
                             _hover={{ bg: "red.900", color: "red.200" }}
-                            onClick={() => handleDeleteClick(student.rollno)}
+                            onClick={() => handleDeleteClick(student._id)}
                             aria-label="Delete student"
                           >
                             <FiTrash2 />

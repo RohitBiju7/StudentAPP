@@ -1,7 +1,7 @@
 // src/components/Navbar.jsx
 import { Flex, HStack, Button, Link as ChakraLink, Icon } from "@chakra-ui/react"
 import { Link } from "react-router-dom"
-import { GraduationCap, NotebookTabs, MessageSquareText } from "lucide-react"
+import { GraduationCap, NotebookTabs, MessageSquareText, UserPlus } from "lucide-react"
 
 const Navbar = () => {
   return (
@@ -28,6 +28,11 @@ const Navbar = () => {
       </ChakraLink>
 
       <HStack gap={3}>
+        
+        <Button asChild colorPalette="ghost" size="sm" bg="gray.800" color="white" _hover={{ bg: "gray.700" }}>
+          <Link to="/register"><UserPlus />Register</Link>
+        </Button>
+        
         <Button asChild colorPalette="ghost" size="sm" bg="gray.800" color="white" _hover={{ bg: "gray.700" }}>
           <Link to="/students"><NotebookTabs />Directory</Link>
         </Button>

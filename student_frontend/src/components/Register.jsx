@@ -1,5 +1,6 @@
-import { useState } from "react"
-import { Link as RouterLink } from "react-router-dom"
+import { useState } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   Box,
   Button,
@@ -12,10 +13,13 @@ import {
   Text,
   IconButton,
   Link,
-} from "@chakra-ui/react"
-import { FiEye, FiEyeOff } from "react-icons/fi"
+  Spinner,
+} from "@chakra-ui/react";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const Register = () => {
+  const navigate = useNavigate();
+
   // 1. Form state to store inputs
   const [formData, setFormData] = useState({
     rollno: "",
@@ -24,24 +28,63 @@ const Register = () => {
     email: "",
     marks: "",
     password: "",
-  })
+  });
 
-  // 2. State for toggle password visibility
-  const [showPassword, setShowPassword] = useState(false)
+  // 2. UI State for toggle password visibility, loading, and status messages
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState({ type: "", text: "" });
 
   // 3. Handle input field changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    })
-  }
+    });
+  };
 
-  // 4. Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log("Form Submitted:", formData)
-  }
+  // 4. Handle form submission via Axios
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatusMessage({ type: "", text: "" });
+
+    // Format payload types (convert rollno and marks to numbers)
+    const payload = {
+      ...formData,
+      rollno: Number(formData.rollno),
+      marks: Number(formData.marks),
+    };
+
+    try {
+      const response = await axios.post("http://localhost:3000/students/register", payload);
+      
+      console.log("Registration successful:", response.data);
+      setStatusMessage({ type: "success", text: "Student registered successfully!" });
+
+      // Reset form fields
+      setFormData({
+        rollno: "",
+        candidate_name: "",
+        course: "",
+        email: "",
+        marks: "",
+        password: "",
+      });
+
+      // Redirect to directory table or login after a brief delay
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    } catch (error) {
+      console.error("Registration error:", error);
+      const errorMessage =
+        error.response?.data?.message || "Registration failed. Please try again.";
+      setStatusMessage({ type: "error", text: errorMessage });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Container maxW="md" py={12}>
@@ -61,6 +104,23 @@ const Register = () => {
           Create an account to manage your student profile
         </Text>
 
+        {/* Feedback Alert Message */}
+        {statusMessage.text && (
+          <Box
+            mb={4}
+            p={3}
+            borderRadius="md"
+            bg={statusMessage.type === "success" ? "green.900" : "red.900"}
+            borderColor={statusMessage.type === "success" ? "green.700" : "red.700"}
+            borderWidth="1px"
+            color="white"
+            fontSize="sm"
+            textAlign="center"
+          >
+            {statusMessage.text}
+          </Box>
+        )}
+
         <form onSubmit={handleSubmit}>
           <VStack gap={4}>
             {/* Full Name */}
@@ -74,6 +134,7 @@ const Register = () => {
                 placeholder="John Doe"
                 value={formData.candidate_name}
                 onChange={handleChange}
+                required
                 bg="gray.800"
                 borderColor="gray.700"
                 _hover={{ borderColor: "gray.600" }}
@@ -81,18 +142,19 @@ const Register = () => {
               />
             </Box>
 
-            {/* Roll Number & Course (Placed side by side to save vertical space) */}
+            {/* Roll Number & Course */}
             <HStack w="full" gap={3}>
               <Box w="half" flex={1}>
                 <Text as="label" fontSize="sm" color="gray.300" mb={2} display="block">
                   Roll No.
                 </Text>
                 <Input
-                  type="text"
+                  type="number"
                   name="rollno"
-                  placeholder="CS101"
+                  placeholder="101"
                   value={formData.rollno}
                   onChange={handleChange}
+                  required
                   bg="gray.800"
                   borderColor="gray.700"
                   _hover={{ borderColor: "gray.600" }}
@@ -110,6 +172,7 @@ const Register = () => {
                   placeholder="B.Tech CS"
                   value={formData.course}
                   onChange={handleChange}
+                  required
                   bg="gray.800"
                   borderColor="gray.700"
                   _hover={{ borderColor: "gray.600" }}
@@ -129,6 +192,7 @@ const Register = () => {
                 placeholder="student@university.edu"
                 value={formData.email}
                 onChange={handleChange}
+                required
                 bg="gray.800"
                 borderColor="gray.700"
                 _hover={{ borderColor: "gray.600" }}
@@ -147,6 +211,7 @@ const Register = () => {
                 placeholder="85"
                 value={formData.marks}
                 onChange={handleChange}
+                required
                 bg="gray.800"
                 borderColor="gray.700"
                 _hover={{ borderColor: "gray.600" }}
@@ -166,6 +231,7 @@ const Register = () => {
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange}
+                  required
                   bg="gray.800"
                   borderColor="gray.700"
                   _hover={{ borderColor: "gray.600" }}
@@ -191,8 +257,9 @@ const Register = () => {
               width="full"
               mt={4}
               size="lg"
+              isDisabled={loading}
             >
-              Register
+              {loading ? <Spinner size="sm" /> : "Register"}
             </Button>
 
             {/* Login Redirect Link */}
@@ -211,7 +278,7 @@ const Register = () => {
         </form>
       </Box>
     </Container>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;
