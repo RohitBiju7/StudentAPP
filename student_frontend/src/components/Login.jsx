@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { Link as RouterLink } from "react-router-dom"
+import { Link as RouterLink, useNavigate } from "react-router-dom"
+import axios from "axios"
 import {
   Box,
   Button,
@@ -15,11 +16,15 @@ import {
 import { FiEye, FiEyeOff } from "react-icons/fi"
 
 const Login = () => {
+  const navigate = useNavigate()
+
   // 1. Form state (Login only needs email & password)
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
+  const [loading, setLoading] = useState(false)
+  const [statusMessage, setStatusMessage] = useState({ type: "", text: "" })
 
   // 2. Toggle password visibility
   const [showPassword, setShowPassword] = useState(false)
@@ -33,9 +38,27 @@ const Login = () => {
   }
 
   // 4. Handle submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log("Login Form Submitted:", formData)
+    setLoading(true)
+    setStatusMessage({ type: "", text: "" })
+
+    try {
+      const response = await axios.post("http://localhost:3000/students/login", formData)
+      console.log("Login successful:", response.data)
+      setStatusMessage({ type: "success", text: "Logged in successfully!" })
+
+      // Redirect to student list or another page after successful login
+      setTimeout(() => {
+        navigate("/students")
+      }, 1200)
+    } catch (error) {
+      console.error("Login failed:", error)
+      const errorMessage = error.response?.data?.message || "Login failed. Please check your credentials."
+      setStatusMessage({ type: "error", text: errorMessage })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -55,6 +78,22 @@ const Login = () => {
         <Text color="gray.400" fontSize="sm" mb={6} textAlign="center">
           Enter your credentials to access your portal
         </Text>
+
+        {statusMessage.text && (
+          <Box
+            mb={4}
+            p={3}
+            borderRadius="md"
+            bg={statusMessage.type === "success" ? "green.900" : "red.900"}
+            borderColor={statusMessage.type === "success" ? "green.700" : "red.700"}
+            borderWidth="1px"
+            color="white"
+            fontSize="sm"
+            textAlign="center"
+          >
+            {statusMessage.text}
+          </Box>
+        )}
 
         <form onSubmit={handleSubmit}>
           <VStack gap={4}>
@@ -98,6 +137,7 @@ const Login = () => {
                   variant="ghost"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
+                  color="teal.400"
                 >
                   {showPassword ? <FiEyeOff /> : <FiEye />}
                 </IconButton>
@@ -113,6 +153,8 @@ const Login = () => {
               width="full"
               mt={4}
               size="lg"
+              isLoading={loading}
+              loadingText="Logging in"
             >
               Login
             </Button>

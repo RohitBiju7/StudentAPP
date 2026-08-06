@@ -264,17 +264,17 @@ const Register = () => {
             </Button>
 
             {/* Login Redirect Link */}
-            {/* <Text fontSize="sm" color="gray.400" mt={2} textAlign="center">
+            <Text fontSize="sm" color="gray.400" mt={2} textAlign="center">
               Already registered?{" "}
               <Link
                 as={RouterLink}
                 to="/login"
-                color="ghost.400"
+                color="teal.400"
                 _hover={{ textDecoration: "underline", opacity: 0.8 }}
               >
                 Click here to Login
               </Link>
-            </Text> */}
+            </Text>
           </VStack>
         </form>
       </Box>
