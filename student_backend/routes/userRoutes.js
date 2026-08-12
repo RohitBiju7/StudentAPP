@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Student = require('../models/userModel');
+const jwt = require('jsonwebtoken');
 
-// Register a new student (persist to MongoDB)
+// Register a new student
 router.post('/register', async (req, res) => {
     try {
         const { rollno, candidate_name, course, email, marks, password } = req.body;
@@ -67,13 +68,24 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        if (student.password !== password) {
+        // Compare password using bcrypt
+        const isPasswordValid = await student.comparePassword(password);
+        if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
+        // Safe payload (NEVER put raw passwords inside JWTs)
+        const payload = { id: student._id, email: student.email };
+        
+        // Generate JWT token
+        const token = jwt.sign(payload, process.env.JWT_SECRET || "secret", { expiresIn: '1d' });
+
+        // Single response output
         return res.status(200).json({
             message: 'Login successful',
+            token: token,
             student: {
+                id: student._id,
                 rollno: student.rollno,
                 candidate_name: student.candidate_name,
                 email: student.email,
@@ -121,7 +133,7 @@ router.get('/count', async (req, res) => {
     }
 });
 
-// view student by rollno
+// View student by rollno
 router.get('/:rollno', async (req, res) => {
     try {
         const rollno = parseInt(req.params.rollno);
@@ -138,8 +150,7 @@ router.get('/:rollno', async (req, res) => {
     }
 });
 
-
-// update student by id
+// Update student by id
 router.put('/:id', async (req, res) => {
     try {
         const updates = req.body;
@@ -154,8 +165,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-
-//Delete student by id
+// Delete student by id
 router.delete('/:id', async (req, res) => {
     try {
         const deleted = await Student.findByIdAndDelete(req.params.id);
@@ -167,8 +177,5 @@ router.delete('/:id', async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 });
-
-
-
 
 module.exports = router;

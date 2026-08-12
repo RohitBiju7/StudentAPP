@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const studentSchema = new mongoose.Schema({
     rollno: {
@@ -38,5 +39,26 @@ const studentSchema = new mongoose.Schema({
         minlength: 6,
     },
 });
+
+// Hash password before saving
+studentSchema.pre('save', async function() {
+    // Only hash if password has been modified
+    if (!this.isModified('password')) {
+        return;
+    }
+
+    try {
+        // Generate salt and hash password
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+    } catch (error) {
+        throw error;
+    }
+});
+
+// Method to compare passwords
+studentSchema.methods.comparePassword = async function(candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password);
+};
 
 module.exports = mongoose.model('Student', studentSchema);

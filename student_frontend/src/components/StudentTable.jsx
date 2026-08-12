@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+//import axios from "axios";
+import { axiosInstance } from "../../axiosInterceptor";
 import {
   Box,
   Container,
@@ -21,7 +22,7 @@ const StudentTable = () => {
 
   // 1. GET Request on component load
   useEffect(() => {
-    axios
+    axiosInstance
       .get("http://localhost:3000/students/")
       .then((response) => {
         setStudents(response.data);
@@ -50,7 +51,7 @@ const StudentTable = () => {
 
   // 2. PUT Request using _id
   const handleSaveEdit = () => {
-    axios
+    axiosInstance
       .put(`http://localhost:3000/students/${editingId}`, editFormData)
       .then((response) => {
         const updatedStudent = response.data.student;
@@ -83,7 +84,7 @@ const StudentTable = () => {
 
   // 3. DELETE Request using _id
   const handleConfirmDelete = (id) => {
-    axios
+    axiosInstance
       .delete(`http://localhost:3000/students/${id}`)
       .then((response) => {
         setStudents(students.filter((student) => student._id !== id));

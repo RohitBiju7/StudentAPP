@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link as RouterLink, useNavigate } from "react-router-dom"
-import axios from "axios"
+//import axios from "axios"
+import { axiosInstance } from "../../axiosInterceptor"
 import {
   Box,
   Button,
@@ -38,27 +39,34 @@ const Login = () => {
   }
 
   // 4. Handle submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     setLoading(true)
     setStatusMessage({ type: "", text: "" })
 
-    try {
-      const response = await axios.post("http://localhost:3000/students/login", formData)
-      console.log("Login successful:", response.data)
-      setStatusMessage({ type: "success", text: "Logged in successfully!" })
-
-      // Redirect to student list or another page after successful login
-      setTimeout(() => {
-        navigate("/students")
-      }, 1200)
-    } catch (error) {
-      console.error("Login failed:", error)
-      const errorMessage = error.response?.data?.message || "Login failed. Please check your credentials."
-      setStatusMessage({ type: "error", text: errorMessage })
-    } finally {
-      setLoading(false)
-    }
+    axiosInstance.post("http://localhost:3000/students/login", formData)
+      .then(res => {
+        if (res.data?.message === "Login successful") {
+          localStorage.setItem("isLoggedIn", "true")
+          if (res.data?.token) {
+            localStorage.setItem("token", res.data.token)
+          }
+          window.dispatchEvent(new Event("auth-change"))
+          setStatusMessage({ type: "success", text: "Logged in successfully!" })
+          navigate("/students")
+        } else {
+          throw new Error("Unexpected login response")
+        }
+      })
+      .catch((error) => {
+        console.error("Login failed:", error)
+        const errorMessage =
+          error.response?.data?.message || "Login failed. Please check your credentials."
+        setStatusMessage({ type: "error", text: errorMessage })
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   return (
