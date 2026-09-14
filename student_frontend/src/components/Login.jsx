@@ -44,7 +44,7 @@ const Login = () => {
     setLoading(true)
     setStatusMessage({ type: "", text: "" })
 
-    axiosInstance.post("http://localhost:3000/students/login", formData)
+    axiosInstance.post("/api/students/login", formData)
       .then(res => {
         if (res.data?.message === "Login successful") {
           localStorage.setItem("isLoggedIn", "true")

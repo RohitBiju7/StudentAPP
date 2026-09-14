@@ -23,7 +23,7 @@ const StudentTable = () => {
   // 1. GET Request on component load
   useEffect(() => {
     axiosInstance
-      .get("http://localhost:3000/students/")
+      .get("/api/students/")
       .then((response) => {
         setStudents(response.data);
         console.log("Students loaded:", response.data);
@@ -52,7 +52,7 @@ const StudentTable = () => {
   // 2. PUT Request using _id
   const handleSaveEdit = () => {
     axiosInstance
-      .put(`http://localhost:3000/students/${editingId}`, editFormData)
+      .put(`/api/students/${editingId}`, editFormData)
       .then((response) => {
         const updatedStudent = response.data.student;
 
@@ -85,7 +85,7 @@ const StudentTable = () => {
   // 3. DELETE Request using _id
   const handleConfirmDelete = (id) => {
     axiosInstance
-      .delete(`http://localhost:3000/students/${id}`)
+      .delete(`/api/students/${id}`)
       .then((response) => {
         setStudents(students.filter((student) => student._id !== id));
         setDeletingId(null);
