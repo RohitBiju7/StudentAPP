@@ -6,7 +6,7 @@ export const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   function (config) {
-    const accessToken = localStorage.getItem("logintoken");
+    const accessToken = localStorage.getItem("token");
     if (accessToken && config) {
       config.headers = config.headers || {};
       config.headers.token = accessToken;

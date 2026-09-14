@@ -3,6 +3,22 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Student = require('../models/userModel');
 const jwt = require('jsonwebtoken');
+router.use(express.json()); // Middleware to parse JSON bodies
+
+// Middleware to verify JWT token
+function verifyToken(req, res, next) {
+    let token = req.headers.token;
+    try{
+        if(!token) return res.status(401).json({ message: 'Unauthorized request' });
+
+        const payload = jwt.verify(token, "secret");
+        if(!payload) return res.status(401).json({ message: 'Unauthorized request' });
+
+        next();
+    }catch(error){
+        return res.status(401).json({ message: 'Unauthorized request' });
+    }
+}
 
 // Register a new student
 router.post('/register', async (req, res) => {
@@ -78,7 +94,7 @@ router.post('/login', async (req, res) => {
         const payload = { id: student._id, email: student.email };
         
         // Generate JWT token
-        const token = jwt.sign(payload, process.env.JWT_SECRET || "secret", { expiresIn: '1d' });
+        const token = jwt.sign(payload, "secret", { expiresIn: '1d' });
 
         // Single response output
         return res.status(200).json({
@@ -98,7 +114,7 @@ router.post('/login', async (req, res) => {
 });
 
 // View all students
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
     try {
         const students = await Student.find();
         return res.status(200).json(students);
@@ -108,7 +124,7 @@ router.get('/', async (req, res) => {
 });
 
 // Debug endpoint for active DB info
-router.get('/debug/connection', async (req, res) => {
+router.get('/debug/connection', verifyToken, async (req, res) => {
     try {
         const connection = mongoose.connection;
         const count = await Student.countDocuments();
@@ -124,7 +140,7 @@ router.get('/debug/connection', async (req, res) => {
 });
 
 // Check student count
-router.get('/count', async (req, res) => {
+router.get('/count', verifyToken, async (req, res) => {
     try {
         const count = await Student.countDocuments();
         return res.status(200).json({ count });
@@ -134,7 +150,7 @@ router.get('/count', async (req, res) => {
 });
 
 // View student by rollno
-router.get('/:rollno', async (req, res) => {
+router.get('/:rollno', verifyToken,async (req, res) => {
     try {
         const rollno = parseInt(req.params.rollno);
         if (isNaN(rollno)) {
@@ -151,7 +167,7 @@ router.get('/:rollno', async (req, res) => {
 });
 
 // Update student by id
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken, async (req, res) => {
     try {
         const updates = req.body;
         const options = { new: true, runValidators: true };
@@ -166,7 +182,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete student by id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res) => {
     try {
         const deleted = await Student.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ message: 'Student not found' });
