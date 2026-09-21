@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: "/api/", // Replace with your backend URL
+  baseURL: "/api", // Replace with your backend URL
 });
 
 axiosInstance.interceptors.request.use(

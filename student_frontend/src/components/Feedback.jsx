@@ -39,7 +39,7 @@ const Feedback = () => {
 
     try {
       const response = await axios.post(
-        "/api/feedback/submit",
+        "/feedback/submit",
         formData
       );
 
