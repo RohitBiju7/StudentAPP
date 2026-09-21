@@ -58,7 +58,7 @@ const Register = () => {
     };
 
     try {
-      const response = await axiosInstance.post("/api/students/register", payload);
+      const response = await axiosInstance.post("/students/register", payload);
       
       console.log("Registration successful:", response.data);
       setStatusMessage({ type: "success", text: "Student registered successfully!" });
