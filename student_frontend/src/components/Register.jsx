@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-//import axios from "axios";
-import { axiosInstance } from "../../axiosInterceptor";
+import axios from "axios";
 import {
   Box,
   Button,
@@ -58,7 +57,7 @@ const Register = () => {
     };
 
     try {
-      const response = await axiosInstance.post("/students/register", payload);
+      const response = await axios.post("/api/students/register", payload);
       
       console.log("Registration successful:", response.data);
       setStatusMessage({ type: "success", text: "Student registered successfully!" });

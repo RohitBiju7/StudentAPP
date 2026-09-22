@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { Link as RouterLink, useNavigate } from "react-router-dom"
-//import axios from "axios"
-import { axiosInstance } from "../../axiosInterceptor"
+import axios from "axios"
 import {
   Box,
   Button,
@@ -44,7 +43,7 @@ const Login = () => {
     setLoading(true)
     setStatusMessage({ type: "", text: "" })
 
-    axiosInstance.post("/students/login", formData)
+    axios.post("/api/students/login", formData)
       .then(res => {
         if (res.data?.message === "Login successful") {
           localStorage.setItem("isLoggedIn", "true")
